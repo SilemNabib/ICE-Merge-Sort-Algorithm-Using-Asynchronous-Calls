@@ -5,13 +5,16 @@ import com.zeroc.Ice.Util;
 public class MainServer {
     public static void main(String[] args) {
         try (Communicator communicator = Util.initialize(args)) {
-            // quiero que use protocolo tcp y puerto 10000
-            ObjectAdapter adapter = communicator.createObjectAdapterWithEndpoints("Merge","default -p 10000");
-            com.zeroc.Ice.Object object = new CoordinatorI();
-            adapter.add(object, Util.stringToIdentity("Coordinator"));
+            communicator.getProperties().setProperty("Ice.MessageSizeMax", "100000000");
+            communicator.getProperties().setProperty("Ice.ThreadPool.Server.Size", "10");
+            communicator.getProperties().setProperty("Ice.RetryIntervals", "-1");
+
+            ObjectAdapter adapter = communicator.createObjectAdapterWithEndpoints("Merge", "default -p 27402");
+            CoordinatorI coordinator = new CoordinatorI();
+            adapter.add(coordinator, Util.stringToIdentity("coordinator"));
             adapter.activate();
+
             communicator.waitForShutdown();
         }
     }
 }
-
