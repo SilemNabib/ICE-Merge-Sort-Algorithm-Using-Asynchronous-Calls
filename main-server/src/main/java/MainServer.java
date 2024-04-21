@@ -1,7 +1,7 @@
 import com.zeroc.Ice.Communicator;
 import com.zeroc.Ice.ObjectAdapter;
 import com.zeroc.Ice.Util;
-
+ 
 public class MainServer {
     public static void main(String[] args) {
         try (Communicator communicator = Util.initialize(args)) {

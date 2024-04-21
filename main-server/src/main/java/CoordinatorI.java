@@ -17,16 +17,17 @@ public class CoordinatorI implements MergeCoordinator {
 
 
     @Override
-    public synchronized void registerWorker(MergeWorkerPrx worker, Current current) {
-        System.out.println("Worker registered");
+    public void registerWorker(MergeWorkerPrx worker, Current current) {
         workers.add(worker);
     }
 
     @Override
-    public synchronized void startMergeSort(int[] data, AMISortCallbackPrx cb, Current current) {
+    public void startMergeSort(int[] data, AMISortCallbackPrx cb, Current current) {
         this.cb = cb;
         int numWorkers = workers.size();
         int chunkSize = data.length / numWorkers;
+        results = new int[data.length];
+        resultIndex = 0;
 
         for (int i = 0; i < numWorkers; i++) {
             int start = i * chunkSize;
@@ -35,29 +36,21 @@ public class CoordinatorI implements MergeCoordinator {
             workers.get(i).sort(chunk);
             System.out.println("Sent partial data to worker");
         }
-
-        results = new int[data.length];
-        resultIndex = 0;
-
-        if (workers.isEmpty()) {
-            cb.sortResult(new MergeResult(data));
-        }
     }
 
     @Override
-    public synchronized void receiveResult(MergeResult result, Current current) {
+    public void receiveResult(MergeResult result, Current current) {
         System.out.println("Received partial result");
         int[] partialResult = result.data;
         System.arraycopy(partialResult, 0, results, resultIndex, partialResult.length);
         resultIndex += partialResult.length;
-
 
         if (resultIndex == results.length) {
             mergeResults();
         }
     }
 
-    private synchronized void mergeResults() {
+    private void mergeResults() {
         Arrays.parallelSort(results);
         MergeResult finalResult = new MergeResult(results);
         cb.sortResult(finalResult);

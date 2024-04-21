@@ -8,7 +8,7 @@ module General {
     };
 
     interface MergeWorker {
-        idempotent MergeResult sort(IntSeq data);
+        void sort(IntSeq data);
     };
 
     interface AMISortCallback {
