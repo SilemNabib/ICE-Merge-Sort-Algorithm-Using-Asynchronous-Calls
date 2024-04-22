@@ -6,6 +6,12 @@ import com.zeroc.Ice.Util;
 import General.AMISortCallbackPrx;
 import General.MergeResult;
 
+/**
+ * The Client class is responsible for initializing and managing a client that connects to the main server.
+ * @author Andres Parra
+ * @author Alejandra Mantilla
+ * @author Silem Nabib (Documentation)
+ */
 public class Client implements General.AMISortCallback {
 
     public static void main(String[] args) {
