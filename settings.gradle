@@ -7,5 +7,5 @@
 
 rootProject.name = 'merge-sort-ICE'
 include 'client'
-include 'main-server'
-include 'worker-server'
+include 'mainServer'
+include 'workerServer'

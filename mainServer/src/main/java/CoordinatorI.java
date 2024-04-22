@@ -1,15 +1,15 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import com.zeroc.Ice.Current;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import General.AMISortCallbackPrx;
-import General.MergeCoordinator;
 import General.MergeResult;
 import General.MergeWorkerPrx;
+import com.zeroc.Ice.Current;
 
-public class CoordinatorI implements MergeCoordinator {
+public class CoordinatorI implements General.MergeCoordinator{
     private final List<MergeWorkerPrx> workers = new ArrayList<>();
     private int[] results;
     private int resultIndex;
@@ -29,13 +29,21 @@ public class CoordinatorI implements MergeCoordinator {
         results = new int[data.length];
         resultIndex = 0;
 
+        ExecutorService executor = Executors.newFixedThreadPool(numWorkers);
+
         for (int i = 0; i < numWorkers; i++) {
             int start = i * chunkSize;
             int end = (i == numWorkers - 1) ? data.length : (i + 1) * chunkSize;
             int[] chunk = Arrays.copyOfRange(data, start, end);
-            workers.get(i).sort(chunk);
-            System.out.println("Sent partial data to worker");
+            int finalI = i;
+
+            executor.submit(() -> {
+                workers.get(finalI).sort(chunk);
+                System.out.println("Sent partial data to worker:" + finalI + ".");
+            });
         }
+
+        executor.shutdown();
     }
 
     @Override

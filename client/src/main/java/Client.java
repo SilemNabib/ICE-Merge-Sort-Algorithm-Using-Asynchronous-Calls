@@ -21,6 +21,7 @@ public class Client implements General.AMISortCallback {
                 throw new Error("Invalid proxy");
             }
             System.out.println("Client connected to server");
+
             while (true) {
                 int value = Integer.parseInt(System.console().readLine("Enter a number to sort: "));
                 int[] data = new int[value];
