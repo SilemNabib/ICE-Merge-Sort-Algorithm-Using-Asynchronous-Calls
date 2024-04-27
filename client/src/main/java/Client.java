@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -102,7 +103,7 @@ public class Client implements AMISortCallback {
                     System.out.print("Enter the file name: ");
                     String fileName = sc.nextLine();
 
-                    list = readList(fileName);
+                    list = loadFile(fileName);
                     break;
                 case 0:
                     System.out.println("Exiting...");
@@ -152,15 +153,19 @@ public class Client implements AMISortCallback {
         return list;
     }
 
-    public static int[] readList(String filePath) {
+    private static int[] loadFile(String fileName){
+        return loadFile(fileName, 0);
+    }
+
+    private static int[] loadFile(String fileName, int sheetIndex) {
         File assetsDir = new File("assets");
         String absolutePath = assetsDir.getAbsolutePath();
 
         List<Integer> numbers = new ArrayList<>();
-        try (FileInputStream fis = new FileInputStream(new File(assetsDir, filePath + ".xlsx"));
+        try (FileInputStream fis = new FileInputStream(new File(assetsDir, fileName + ".xlsx"));
              Workbook workbook = new XSSFWorkbook(fis)) {
 
-            Sheet sheet = workbook.getSheetAt(0); // get first sheet
+            Sheet sheet = workbook.getSheetAt(sheetIndex); // get first sheet
 
             for (Row row : sheet) {
                 Cell cell = row.getCell(0, Row.MissingCellPolicy.RETURN_BLANK_AS_NULL); // get first cell of each row
@@ -170,7 +175,7 @@ public class Client implements AMISortCallback {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         return numbers.stream().mapToInt(i -> i).toArray();
