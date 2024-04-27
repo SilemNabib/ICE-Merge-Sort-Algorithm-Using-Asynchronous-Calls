@@ -41,15 +41,18 @@ public class Client implements AMISortCallback {
             }
             System.out.println("Client connected to server");
 
+            AMISortCallbackPrx callback = AMISortCallbackPrx.uncheckedCast(
+                    adapter.createProxy(Util.stringToIdentity("client")));
+
             int[] data;
 
             do {
                 data = menu();
                 if (data.length != 0) {
                     client.latch = new CountDownLatch(1);
-                    AMISortCallbackPrx callback = AMISortCallbackPrx.uncheckedCast(
-                            adapter.createProxy(Util.stringToIdentity("client")));
+
                     coordinator.startMergeSort(data, callback);
+
                     client.latch.await();
                 }
             } while (data.length != 0);
