@@ -1,4 +1,7 @@
 # Merge Sort Algorithm Using Asynchronous Calls
+
+- [Analysis report](https://github.com/alejandramantillac/merge-sort-ICE/blob/master/docs/report.md).
+
 ## About
 
 This project consists in implementing a distributed sorting algorithm using asynchronous calls in the context of ICE (Internet Communications Engine). The main features include:
@@ -14,26 +17,26 @@ To run the project you need to follow the next steps:
 1. Clone the repository.
 2. Open the terminal in the project folder.
 3. Start the main server running the following command:
-    ```bash
-    $ java -jar .\mainServer\build\libs\mainServer.jar
-    ```
 
+   ```bash
+   $ java -jar .\mainServer\build\libs\mainServer.jar
+   ```
 4. In a new terminal start the worker server running the following command
-    ```bash
-    $ java -jar .\workerServer\build\libs\workerServer.jar
+
+   ```bash
+   $ java -jar .\workerServer\build\libs\workerServer.jar
    // you can execute many workers as you want
    ```
-   
 5. In a new terminal start the client running the following command:
-    ```bash
-    $ java -jar .\client\build\libs\client.jar 
-    ```
 
-6. Follow the instructions on the console.
+   ```bash
+   $ java -jar .\client\build\libs\client.jar 
+   ```
+6. Follow the instructions on the client console.
 
 ## Contributors
+
 - Andrés David Parra García
 - Maria Alejandra Mantilla Coral
 - Silem Nabib Villa Contreras
 - Gerson de Jesus Hurtado Borja
-
