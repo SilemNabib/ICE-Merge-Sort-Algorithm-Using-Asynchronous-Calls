@@ -12,7 +12,7 @@ module General {
     };
 
     interface AMISortCallback {
-        IntSeq sortResult(MergeResult result);
+        void sortResult(MergeResult result);
     };
     
     interface MergeCoordinator {

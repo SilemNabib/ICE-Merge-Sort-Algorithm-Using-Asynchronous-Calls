@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.Exception;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +27,8 @@ import General.MergeResult;
  */
 public class Client implements AMISortCallback {
     private CountDownLatch latch;
+    private boolean testingMode = false;
+    public int[] lastResult;
 
     public static void main(String[] args) {
         try (Communicator communicator = Util.initialize(args)) {
@@ -47,8 +50,11 @@ public class Client implements AMISortCallback {
             int[] data;
 
             do {
-                data = menu();
-                if (data.length != 0) {
+                data = menu(client);
+
+                if (client.testingMode) {
+                    startTests(client, coordinator, callback);
+                } else if (data.length != 0) {
                     client.latch = new CountDownLatch(1);
 
                     coordinator.startMergeSort(data, callback);
@@ -62,13 +68,13 @@ public class Client implements AMISortCallback {
     }
 
     @Override
-    public synchronized int[] sortResult(MergeResult result, Current current) {
+    public synchronized void sortResult(MergeResult result, Current current) {
         System.out.println("Received sorted data: "+ Arrays.toString(result.data));
-        latch.countDown();
-        return result.data;
+        lastResult = result.data;
+        if (latch != null) latch.countDown();
     }
 
-    public static int[] menu(){
+    public static int[] menu(Client client){
         Scanner sc = new Scanner(System.in);
 
         System.out.println("""
@@ -77,6 +83,7 @@ public class Client implements AMISortCallback {
                 1. Generate a random List.\s
                 2. Insert a List.\s
                 3. Load data to sort.\s
+                9. Run tests.\s
                 0. Exit.\s
                \s""");
 
@@ -84,10 +91,10 @@ public class Client implements AMISortCallback {
         int selection = sc.nextInt();
         sc.nextLine();
 
-        return menuSelection(selection);
+        return menuSelection(client, selection);
     }
 
-    public static int[] menuSelection(int selection){
+    public static int[] menuSelection(Client client, int selection){
         Scanner sc = new Scanner(System.in);
         int[] list = new int[0];
 
@@ -108,6 +115,10 @@ public class Client implements AMISortCallback {
                     String fileName = sc.nextLine();
 
                     list = loadFile(fileName);
+                    break;
+                case 9:
+                    System.out.println("Running tests...");
+                    client.testingMode = true;
                     break;
                 case 0:
                     System.out.println("Exiting...");
@@ -183,5 +194,88 @@ public class Client implements AMISortCallback {
         }
 
         return numbers.stream().mapToInt(i -> i).toArray();
+    }
+
+    private static void startTests(Client client, MergeCoordinatorPrx coordinator, AMISortCallbackPrx callback) {
+        System.out.println("Starting tests...");
+
+        System.out.println("Test 1: " + (test1(client, coordinator, callback) ? "passed" : "failed") + ".");
+        System.out.println("Test 2: " + (test2(client, coordinator, callback) ? "passed" : "failed") + ".");
+        System.out.println("Test 3: " + (test3(client, coordinator, callback) ? "passed" : "failed") + ".");
+        System.out.println("Test 4: " + (test4(client, coordinator, callback) ? "passed" : "failed") + ".");
+        System.out.println("Test 5: " + (test5(client, coordinator, callback) ? "passed" : "failed") + ".");
+    }
+
+    private static boolean test1(Client client, MergeCoordinatorPrx coordinator, AMISortCallbackPrx callback) {
+        // Test 1: Test for empty list
+        int[] data = new int[0];
+        int[] expected = new int[0];
+        coordinator.startMergeSort(data, callback);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        return Arrays.equals(client.lastResult, expected);
+    }
+
+    private static boolean test2(Client client, MergeCoordinatorPrx coordinator, AMISortCallbackPrx callback) {
+        // Test 2: Test for list with one element
+        int[] data = {1};
+        int[] expected = {1};
+        coordinator.startMergeSort(data, callback);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        return Arrays.equals(client.lastResult, expected);
+    }
+
+    private static boolean test3(Client client, MergeCoordinatorPrx coordinator, AMISortCallbackPrx callback) {
+        // Test 3: Test for unsorted list
+
+        int[] data = loadFile("TestFiles", 0);
+        int[] expected = loadFile("TestFiles", 1);
+        coordinator.startMergeSort(data, callback);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        return Arrays.equals(client.lastResult, expected);
+    }
+
+    private static boolean test4(Client client, MergeCoordinatorPrx coordinator, AMISortCallbackPrx callback) {
+        // Test 4: Test for sorted list
+
+        int[] data = loadFile("TestFiles", 2);
+        int[] expected = loadFile("TestFiles", 3);
+        coordinator.startMergeSort(data, callback);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        return Arrays.equals(client.lastResult, expected);
+    }
+
+    private static boolean test5(Client client, MergeCoordinatorPrx coordinator, AMISortCallbackPrx callback) {
+        // Test 5: Test for a list with repeated elements
+
+        int[] data = loadFile("TestFiles", 4);
+        int[] expected = loadFile("TestFiles", 5);
+        coordinator.startMergeSort(data, callback);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+
+        return Arrays.equals(client.lastResult, expected);
     }
 }
