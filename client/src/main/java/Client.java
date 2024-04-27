@@ -22,7 +22,7 @@ import General.MergeResult;
  * The Client class is responsible for initializing and managing a client that connects to the main server.
  * @author Andres Parra
  * @author Alejandra Mantilla
- * @author Silem Nabib (Documentation)
+ * @author Silem Nabib
  */
 public class Client implements AMISortCallback {
     private CountDownLatch latch;
