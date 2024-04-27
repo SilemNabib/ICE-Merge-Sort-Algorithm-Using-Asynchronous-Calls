@@ -59,9 +59,10 @@ public class Client implements AMISortCallback {
     }
 
     @Override
-    public synchronized void sortResult(MergeResult result, Current current) {
+    public synchronized int[] sortResult(MergeResult result, Current current) {
         System.out.println("Received sorted data: "+ Arrays.toString(result.data));
         latch.countDown();
+        return result.data;
     }
 
     public static int[] menu(){
