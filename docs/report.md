@@ -14,7 +14,7 @@ Cuando se hayan combinado todos los resultados parciales, el servidor principal 
 
 La implementación sigue una arquitectura cliente-servidor distribuida, donde el servidor principal (MainServer) coordina el proceso de ordenamiento paralelo utilizando múltiples servidores trabajadores (WorkerServer). El servidor principal divide el conjunto de datos en porciones iguales y envía cada porción a un servidor trabajador disponible. Cada servidor trabajador ordena su porción utilizando el algoritmo de ordenamiento. Una vez que todos los servidores trabajadores han completado su tarea, el servidor principal combina los resultados parciales utilizando una operación de mezcla paralela y envía el resultado final al cliente.
 
-`<Insertar aquí el diagrama de clases>`
+[Diagrama de clases](./ICE.jpg)
 
 ## Pruebas y resultados
 
