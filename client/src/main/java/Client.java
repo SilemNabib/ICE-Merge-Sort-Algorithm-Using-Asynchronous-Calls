@@ -98,6 +98,7 @@ public class Client implements AMISortCallback {
         System.out.print("Select an option: ");
         int selection = sc.nextInt();
         sc.nextLine();
+        
         return menuSelection(client, selection);
     }
 
@@ -136,7 +137,7 @@ public class Client implements AMISortCallback {
                     break;
             }
         } while (!exit);
-        sc.close();
+        
         return list;
     }
 
@@ -152,7 +153,7 @@ public class Client implements AMISortCallback {
         for (int i = 0; i < data.length; i++) {
             data[i] = (int) (Math.random() * 10);
         }
-        sc.close();
+        
         return data;
     }
 
@@ -170,7 +171,7 @@ public class Client implements AMISortCallback {
             list[i] = sc.nextInt();
             sc.nextLine();
         }
-        sc.close();
+        
         System.out.println("\nList generated: " + Arrays.toString(list));
         return list;
     }
