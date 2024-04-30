@@ -98,7 +98,6 @@ public class Client implements AMISortCallback {
         System.out.print("Select an option: ");
         int selection = sc.nextInt();
         sc.nextLine();
-        sc.close();
         return menuSelection(client, selection);
     }
 
